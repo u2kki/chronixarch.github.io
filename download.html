@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>下载Chronix Arch</title>
+<style>
+:root{
+  --primary:#3f51b5;        /* Indigo 500 */
+  --primary-dark:#303f9f;
+  --primary-light:#c5cae9;
+  --accent:#ff4081;         /* Pink A200 */
+  --bg:#fafafa;
+  --surface:#ffffff;
+  --text-primary:rgba(0,0,0,.87);
+  --text-secondary:rgba(0,0,0,.54);
+  --text-disabled:rgba(0,0,0,.26);
+  --divider:rgba(0,0,0,.12);
+  --radius:2px;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+html{ scroll-behavior:smooth; }
+body{
+  font-family:'Roboto','PingFang SC','Noto Sans CJK SC',sans-serif;
+  color:var(--text-primary); background:var(--bg); line-height:1.65;
+  -webkit-font-smoothing:antialiased; padding-top:56px;
+}
+a{ color:var(--primary); text-decoration:none; }
+
+.appbar{
+  position:fixed; top:0; left:0; right:0; z-index:100;
+  height:56px; display:flex; align-items:center; padding:0 24px;
+  background:var(--primary);
+  box-shadow:0 2px 4px rgba(0,0,0,.14),0 3px 4px rgba(0,0,0,.12),0 1px 5px rgba(0,0,0,.2); /* 4dp */
+}
+.appbar .brand{ display:flex; align-items:center; gap:10px; color:#fff; font-size:20px; font-weight:500; letter-spacing:.5px; }
+.appbar .brand .logo{ width:28px; height:28px; background:#fff; border-radius:var(--radius); display:flex; align-items:center; justify-content:center; color:var(--primary); font-size:16px; font-weight:700; }
+.appbar .spacer{ flex:1; }
+.appbar nav{ display:flex; gap:8px; }
+.appbar nav a{
+  color:rgba(255,255,255,.92); font-size:14px; font-weight:500; text-transform:uppercase; letter-spacing:1px;
+  padding:8px 16px; border-radius:var(--radius); transition:background .2s;
+}
+.appbar nav a:hover{ background:rgba(255,255,255,.18); text-decoration:none; }
+
+.page-head{ background:var(--primary); text-align:center; color:#fff; padding:56px 24px 48px; }
+.page-head h1{ font-size:clamp(2rem,5vw,3.5rem); font-weight:300; letter-spacing:.02em; }
+.page-head p{ font-size:clamp(1rem,2.5vw,1.25rem); opacity:.92; max-width:620px; margin:12px auto 0; }
+
+.hero-image{ max-width:1120px; margin:-24px auto 0; padding:0 24px; position:relative; z-index:2; }
+.hero-image .frame{
+  position:relative; width:100%; aspect-ratio:16/9; overflow:hidden;
+  border-radius:var(--radius);
+  box-shadow:0 3px 6px rgba(0,0,0,.15),0 2px 4px rgba(0,0,0,.12); /* 2dp */
+}
+.hero-image .frame img{ width:100%; height:100%; object-fit:cover; display:block; }
+
+.download-section{ text-align:center; padding:48px 24px 56px; max-width:760px; margin:0 auto; }
+.btn-download{
+  display:inline-block; background:var(--accent); color:#fff;
+  padding:12px 48px; border-radius:var(--radius); font-size:1rem; font-weight:500;
+  text-transform:uppercase; letter-spacing:.06em;
+  box-shadow:0 2px 4px rgba(0,0,0,.17); transition:box-shadow .23s, transform .05s;
+}
+.btn-download:hover{ box-shadow:0 4px 8px rgba(0,0,0,.27); transform:translateY(-1px); text-decoration:none; }
+
+.section{ padding:16px 24px 56px; max-width:760px; margin:0 auto; }
+.section-title{ font-size:1.75rem; font-weight:350; text-align:center; margin-bottom:36px; color:var(--text-primary); }
+.changelog{ background:var(--surface); border-radius:var(--radius);
+  box-shadow:0 1px 3px rgba(0,0,0,.12),0 1px 2px rgba(0,0,0,.24); padding:8px 0; }
+.release{ padding:24px 32px; border-bottom:1px solid var(--divider); }
+.release:last-child{ border-bottom:none; }
+.release-header{ display:flex; align-items:center; gap:12px; margin-bottom:12px; flex-wrap:wrap; }
+.release-header .ver{ font-size:1.1rem; font-weight:500; }
+.release-header .date{ font-size:13px; color:var(--text-disabled); }
+.release-header .badge{ font-size:12px; font-weight:500; padding:2px 10px; border-radius:10px; background:rgba(255,64,129,.12); color:var(--accent); }
+.release ul{ margin:8px 0 0 22px; }
+.release li{ font-size:14.5px; color:var(--text-primary); margin:6px 0; }
+
+footer{ background:#212121; color:rgba(255,255,255,.67); padding:32px 24px; text-align:center; }
+.foot-brand{ max-width:540px; margin:0 auto 16px; }
+.foot-brand .brand-name{ font-size:1.075rem; font-weight:510; color:#fff; margin-bottom:6px; }
+.foot-brand p{ font-size:.8625rem; opacity:.73; line-height:1.55; }
+.copyright{ border-top:1px solid rgba(255,255,255,.115); padding-top:16px; font-size:.7875rem; opacity:.54; }
+
+@media(max-width:768px){
+  .appbar{ padding:0 16px; } .appbar nav{ gap:4px; } .appbar nav a{ font-size:12px; padding:8px 10px; }
+  .page-head{ padding:40px 16px 36px; }
+  .hero-image{ padding:0 16px; margin-top:-16px; }
+  .download-section{ padding:36px 16px 40px; }
+  .section{ padding:8px 16px 40px; }
+}
+</style>
+</head>
+<body>
+
+<header class="appbar">
+  <span class="brand"><span class="logo">↓</span>Chronix Arch Download</span>
+  <span class="spacer"></span>
+  <nav>
+    <a href="index.html">官网</a>
+    <a href="docs.html">文档</a>
+    <a href="download.html">下载</a>
+    <a href="https://gitee.com/project-chronix">Gitee</a>
+    <a href="#download">BILIBILI</a>
+  </nav>
+</header>
+
+<section class="page-head">
+  <h1>准备 Chronix Arch</h1>
+  <p>在北京时间10月1日，我们将在此开启全新的旅程</p>
+</section>
+
+<div class="hero-image">
+  <div class="frame">
+    <img src="preview.png" alt="OSPreview">
+  </div>
+</div>
+
+<section class="download-section" id="download">
+  <a href="http://tlwiwnrky.hd-bkt.clouddn.com/r1-2609_pclimg.zip" class="btn-download">提前获取</a>
+</section>
+
+<div class="section">
+  <h2 class="section-title">历史版本</h2>
+  <div class="changelog">
+    <div class="release">
+      <div class="release-header">
+        <span class="ver">Polaris (R1-2609)</span>
+        <span class="badge">最新</span>
+        <span class="badge">Beta</span>
+        <span class="date">2026-09-26</span>
+      </div>
+      <ul>
+        <li>增加chronix-clear命令</li>
+        <li>用户状态下，关闭可能误操作的tty功能</li>
+        <li>加入Chronix Quick-EXE-Runner功能</li>
+      </ul>
+    </div>
+    <div class="release">
+      <div class="release-header">
+        <span class="ver">Violet Abyss (R1-2609)</span>
+        <span class="badge">Beta</span>
+        <span class="date">2026-09-13</span>
+      </div>
+      <ul>
+        <li>修改DE为深度修改的GNOME</li>
+        <li>Waydroid，Wine预安装已准备</li>
+        <li>os-release更新，系统logo更新</li>
+        <li>加入GNOME-INITIAL-SETUP作为开箱体验</li>
+        <li>Blur实时模糊</li>
+        <li>新增5个MaterialDesign风格的高清壁纸</li>
+        <li>Cursor，icons优化</li>
+        <li>开机动画定制</li>
+        <li>Amberol预装</li>
+      </ul>
+    </div>
+    <div class="release">
+      <div class="release-header">
+        <span class="ver">R0-2608</span>
+        <span class="badge">Beta</span>
+        <span class="date">2026-08-27</span>
+      </div>
+      <ul>
+        <li>自研DE"Material"已准备好</li>
+        <li>Chromium更换为Google Chrome</li>
+        <li>GTK主题与Vimix合并</li>
+        <li>Sakura，yay，sushi预装</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="foot-brand">
+    <div class="brand-name">Chronix Arch</div>
+    <p>专为普通用户而生的，设计，通用，简洁，稳定集于一身的全新Linux发行版</p>
+  </div>
+  <div class="copyright">Copyright 2026 ProjectChronix & u2kki_.</div>
+</footer>
+
+</body>
+</html>

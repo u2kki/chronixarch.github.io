@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chronix Arch Docs</title>
+<style>
+:root{
+  --primary:#3f51b5;        /* Indigo 500 */
+  --primary-dark:#303f9f;   /* 700 */
+  --accent:#ff4081;         /* Pink A200 */
+  --bg:#fafafa;
+  --surface:#ffffff;
+  --text-primary:rgba(0,0,0,.87);
+  --text-secondary:rgba(0,0,0,.54);
+  --text-disabled:rgba(0,0,0,.26);
+  --divider:rgba(0,0,0,.12);
+  --code-bg:#263238;        /* 代码块深底 */
+  --radius:2px;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+html{ scroll-behavior:smooth; }
+body{
+  font-family:'Roboto','PingFang SC','Noto Sans CJK SC',sans-serif;
+  color:var(--text-primary);
+  background:var(--bg);
+  line-height:1.7;
+  -webkit-font-smoothing:antialiased;
+}
+a{ color:var(--primary); text-decoration:none; }
+a:hover{ text-decoration:underline; }
+
+.appbar{
+  position:fixed; top:0; left:0; right:0; z-index:100;
+  height:56px; display:flex; align-items:center;
+  padding:0 24px;
+  background:var(--primary);
+  box-shadow:0 2px 4px rgba(0,0,0,.14),0 3px 4px rgba(0,0,0,.12),0 1px 5px rgba(0,0,0,.20); /* 4dp */
+  transition:background .35s ease, box-shadow .35s ease;
+}
+.appbar .brand{ display:flex; align-items:center; gap:10px; color:#fff; font-size:20px; font-weight:500; letter-spacing:.5px; }
+.appbar .brand .logo{ width:28px; height:28px; background:#fff; border-radius:2px; display:flex; align-items:center; justify-content:center; color:var(--primary); font-size:16px; font-weight:700; }
+.appbar .spacer{ flex:1; }
+.appbar nav{ display:flex; gap:8px; }
+.appbar nav a{
+  color:rgba(255,255,255,.92); font-size:14px; font-weight:500; text-transform:uppercase; letter-spacing:1px;
+  padding:8px 16px; border-radius:var(--radius); transition:background .2s;
+}
+.appbar nav a:hover{ background:rgba(255,255,255,.18); text-decoration:none; }
+
+.doc-hero{
+  margin-top:56px;
+  background:var(--primary);
+  color:#fff;
+  padding:48px 32px 40px;
+}
+.doc-hero-inner{ max-width:1400px; margin:0 auto; }
+.doc-hero .eyebrow{ font-size:13px; text-transform:uppercase; letter-spacing:2px; opacity:.7; margin-bottom:8px; }
+.doc-hero h1{ font-size:clamp(1.75rem,4vw,2.75rem); font-weight:300; margin-bottom:12px; }
+.doc-hero p{ font-size:1.0625rem; opacity:.87; max-width:820px; }
+.doc-hero .meta{ margin-top:20px; display:flex; gap:24px; flex-wrap:wrap; font-size:14px; opacity:.74; }
+
+.layout{ display:flex; max-width:1400px; margin:0 auto; padding:0 32px; }
+
+.sidebar{
+  width:260px; flex:0 0 260px;
+  position:sticky; top:56px;
+  align-self:flex-start;
+  max-height:calc(100vh - 56px);
+  overflow-y:auto;
+  padding:32px 24px 48px 0;
+  border-right:1px solid var(--divider);
+}
+.sidebar .toc-title{ font-size:13px; text-transform:uppercase; letter-spacing:1.5px; color:var(--text-secondary); margin-bottom:12px; font-weight:500; }
+.sidebar ul{ list-style:none; }
+.sidebar li{ margin:2px 0; }
+.sidebar a{
+  display:block; padding:7px 12px; border-radius:var(--radius);
+  color:var(--text-secondary); font-size:14.5px; border-left:3px solid transparent;
+  transition:background .18s, color .18s, border-color .18s;
+}
+.sidebar a:hover{ background:rgba(63,81,181,.06); color:var(--text-primary); text-decoration:none; }
+.sidebar a.active{ color:var(--primary); border-left-color:var(--primary); background:rgba(63,81,181,.08); font-weight:500; }
+.sidebar .group-title{ font-size:12.5px; text-transform:uppercase; letter-spacing:1px; color:var(--text-disabled); margin:18px 0 6px; font-weight:500; }
+
+.main{ flex:1; min-width:0; padding:32px 0 64px 40px; }
+.main section{ margin-bottom:56px; scroll-margin-top:72px; }
+.main h2{
+  font-size:1.625rem; font-weight:400; color:var(--text-primary);
+  padding-bottom:10px; border-bottom:1px solid var(--divider); margin-bottom:20px;
+}
+.main h3{ font-size:1.2rem; font-weight:500; margin:28px 0 12px; color:var(--text-primary); }
+.main h4{ font-size:1rem; font-weight:500; margin:20px 0 10px; color:var(--text-secondary); }
+.main p{ margin:12px 0; color:var(--text-primary); }
+.main ul,.main ol{ margin:12px 0 12px 22px; }
+.main li{ margin:6px 0; color:var(--text-primary); }
+.main code{ background:rgba(63,81,181,.08); color:var(--primary-dark); padding:1.5px 6px; border-radius:var(--radius); font-family:'Roboto Mono',monospace; font-size:.9em; }
+.main strong{ font-weight:600; }
+
+.card{
+  background:var(--surface); border-radius:var(--radius);
+  box-shadow:0 1px 3px rgba(0,0,0,.12),0 1px 2px rgba(0,0,0,.24); /* 1dp */
+  padding:24px 28px; margin:20px 0;
+}
+.card-title{ font-size:1.05rem; font-weight:500; margin-bottom:8px; display:flex; align-items:center; gap:10px; }
+.card-title .dot{ width:10px; height:10px; border-radius:50%; background:var(--accent); }
+
+.note{
+  border-left:4px solid var(--primary); background:rgba(63,81,181,.05);
+  padding:14px 18px; margin:18px 0; border-radius:0 var(--radius) var(--radius) 0;
+  font-size:14.5px; color:var(--text-primary);
+}
+.note.warn{ border-left-color:var(--accent); background:rgba(255,64,129,.05); }
+.note code{ background:rgba(0,0,0,.05); }
+
+pre{
+  background:var(--code-bg); color:#e6edf3;
+  padding:20px 22px; border-radius:var(--radius);
+  overflow-x:auto; font-family:'Roboto Mono',monospace; font-size:13.5px; line-height:1.65;
+  margin:16px 0; box-shadow:0 1px 3px rgba(0,0,0,.12),0 1px 2px rgba(0,0,0,.24);
+}
+pre code{ background:none; color:inherit; padding:0; font-size:inherit; }
+.tok-key{ color:#80cbc4; } .tok-str{ color:#c3e88d; } .tok-num{ color:#f78c6c; }
+.tok-com{ color:#7c8b9a; font-style:italic; } .tok-prop{ color:#82aaff; }
+
+table{ width:100%; border-collapse:collapse; margin:18px 0; font-size:14px; background:var(--surface);
+  box-shadow:0 1px 3px rgba(0,0,0,.12),0 1px 2px rgba(0,0,0,.24); border-radius:var(--radius); overflow:hidden; }
+thead{ background:rgba(63,81,181,.06); }
+th{ text-align:left; padding:14px 16px; font-weight:500; color:var(--text-primary); border-bottom:1px solid var(--divider); }
+td{ padding:12px 16px; border-bottom:1px solid var(--divider); color:var(--text-primary); vertical-align:top; }
+tr:last-child td{ border-bottom:none; }
+tbody tr:hover{ background:rgba(63,81,181,.03); }
+td code{ white-space:nowrap; }
+
+.endpoint{ display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin:14px 0 10px; }
+.method{ font-family:'Roboto Mono',monospace; font-size:12.5px; font-weight:700; padding:3px 10px; border-radius:var(--radius); color:#fff; letter-spacing:.5px; }
+.m-get{ background:#4caf50; } .m-post{ background:var(--accent); } .m-put{ background:#ff9800; } .m-del{ background:#f44336; }
+.url{ font-family:'Roboto Mono',monospace; font-size:14px; color:var(--text-secondary); }
+
+.badge{ display:inline-block; font-size:12px; font-weight:500; padding:2px 10px; border-radius:10px; background:rgba(63,81,181,.1); color:var(--primary); margin-left:8px; vertical-align:middle; }
+
+footer{
+  background:#212121; color:rgba(255,255,255,.67);
+  padding:32px 24px; text-align:center; position:relative; z-index:3;
+}
+.foot-brand{ max-width:540px; margin:0 auto 16px; }
+.foot-brand .brand-name{ font-size:1.075rem; font-weight:510; color:#fff; margin-bottom:6px; }
+.foot-brand p{ font-size:.8625rem; opacity:.73; line-height:1.55; }
+.copyright{ border-top:1px solid rgba(255,255,255,.115); padding-top:16px; font-size:.7875rem; opacity:.54; }
+
+@media(max-width:960px){
+  .sidebar{ display:none; }
+  .layout{ padding:0 20px; }
+  .main{ padding:24px 0 48px; }
+  .doc-hero{ padding:32px 20px; }
+}
+@media(max-width:600px){
+  .appbar{ padding:0 16px; }
+  .appbar nav{ gap:4px; }
+  .appbar nav a{ font-size:12px; padding:8px 10px; }
+  .doc-hero .meta{ gap:14px; font-size:13px; }
+}
+</style>
+</head>
+<body>
+
+<header class="appbar">
+  <span class="brand"><span class="logo">i</span>Chronix Arch Documentation</span>
+  <span class="spacer"></span>
+  <nav>
+    <a href="index.html">官网</a>
+    <a href="docs.html">文档</a>
+    <a href="download.html">下载</a>
+    <a href="https://gitee.com/project-chronix">Gitee</a>
+    <a href="#download">BILIBILI</a>
+  </nav>
+</header>
+
+<div class="doc-hero" id="top">
+  <div class="doc-hero-inner">
+    <div class="eyebrow">User Documentation</div>
+    <h1>开始使用 Chronix Arch<span class="badge">v2.1</span></h1>
+    <p>本文档旨在快速帮您解决关于Chronix Arch的安装，使用过程，扩展功能，以及其他等产生的问题。文档会根据用户反馈不定期更新。</p>
+    <div class="meta">
+      <span>官网：https://chronixarch.pages.dev</span>
+      <span>修改者：u2kki</span>
+      <span>格式：json</span>
+      <span>最后更新：2026-10-01</span>
+    </div>
+  </div>
+</div>
+
+<div class="layout">
+
+  <aside class="sidebar">
+    <div class="toc-title">目录</div>
+    <ul>
+      <li><a href="#ready-to-start" class="active">准备开始</a></li>
+      <li><a href="#make-live-cd">制作启动盘</a></li>
+      <li><a href="#install">安装过程</a></li>
+      <li><a href="#oobe">开箱体验</a></li>
+    </ul>
+    <div class="group-title">使用说明</div>
+    <ul>
+      <li><a href="#desktop">桌面布局&锁屏</a></li>
+      <li><a href="#personalization">个性化</a></li>
+      <li><a href="#applications">软件使用</a></li>
+      <li><a href="#wine-waydroid">Windows与Android支持</a></li>
+    </ul>
+    <div class="group-title">高级开发</div>
+    <ul>
+      <li><a href="#ttty">终端&tty</a></li>
+      <li><a href="#interior">内置套件</a></li>
+      <li><a href="#qa">Q&A</a></li>
+    </ul>
+  </aside>
+
+  <main class="main">
+
+    <section id="ready-to-start">
+      <h2>准备开始</h2>
+      <p>本节帮助你确定您的设备是否支持ChronixOS。</p>
+      <div class="note">一般情况下，您可以安装在任何2010年后x86架构的设备上，但对于某些机型，您可能无法获得完整服务。</div>
+      <h3>设备最低要求</h3>
+      <p>CPU：2010年后任意Intel/AMD</p>
+      <p>GPU/显卡：Intel/AMD任意</p>
+      <p>硬盘存储：32GB（固态机械皆可）</p>
+      <p>运行内存：4GB（DDR3 1333以上）</p>
+      <p>TPM：无要求</p>
+      <p>网络适配器：Broadcom除外（特殊方式可启用）</p>
+      <p>启动方式：UEFI Only</p>
+      <h3>检查全部通过后，准备一个不小于20GB的外部存储设备用于制作启动盘，并提前在官网下载好镜像</h3>
+      <a href="index.html">跳转到官网</a>
+      <p>ISO占用大约16GB，为电脑预留足够的空间</p>
+      <h3>下载balenaEtcher</h3>
+      <pre><code><span class="tok-com"># darwin (macOS,required 11+,only Intel)</span>
+https://downloads.sourceforge.net/project/etcher.mirror/v2.1.7/balenaEtcher-2.1.7-x64.dmg
+
+<span class="tok-com"># Windows</span>
+https://downloads.sourceforge.net/project/etcher.mirror/v2.1.7/balenaEtcher-2.1.7.Setup.exe
+
+<span class="tok-com"># Linux</span>
+https://downloads.sourceforge.net/project/etcher.mirror/v2.1.7/balenaEtcher-linux-x64-2.1.7.zip</code></pre>
+      <div class="note warn">balenaEtcher的服务区位于海外，若下载速度慢，请提前准备相应服务。</div>
+    </section>
+
+    <section id="make-live-cd">
+      <h2>制作启动盘</h2>
+      <p>打开balenaEtcher后，您应该看到类似这样的画面：</p>
+      <img src="docs_images/balenaEtcher.png" alt="balenaEtcher界面内容截图">
+      <h3>开始制作启动盘：</h3>
+      <p>选择“从文件烧录”，在弹出的选择狂选择您刚刚下载的镜像文件</h3>
+      <p>选择“选择目标磁盘”，选择您想要用于作为ChronixArch启动盘的对应设备</h3>
+      <div class="note warn">选择磁盘并开始后会格式化对应磁盘的所有数据，在下一步前，确认您选择的磁盘是否正确，避免丢失文件。</div>
+      <p>选择“现在烧录！”，软件开始制作</h3>
+      <p>烧录完成后，确定关闭balenaEtcher即可</p>
+      <div class="note">若在烧录过程中提示“输入密码”或要求管理员权限，请通过许可，因为修改磁盘数据需要获得管理员权限。</div>
+    </section>
+
+    <section id="install">
+      <h2>安装过程</h2>
+      <div class="note warn">在开始前，请提前接入稳定的网络端口，推荐接入有线网络，因为在安装过程中需要联网下载系统本体。</div>
+      <p>完成上一步后，重启并从您的启动盘启动，方式因机型而不同，请上网搜索您的对应型号从其他设备启动的方式。</p>
+      <div class="note">我们直到Polaris版本前都没有做LiveCD，请参考其他方法。该部分文段将在LiveCD制作完成后更新。</div>
+    </section>
+
+    <section id="oobe">
+      <h2>开箱体验</h2>
+      <p>如果您已经进行到这一步，恭喜，还剩下几个设置，就能开始使用了。</p>
+      <p>跟随指引，完成语言，地区与时区，用户账户设置</p>
+      <div class="note">获取地区与时区信息是Linux本身要求，其他系统也是如此，我们不会获取您的精确位置信息。另外，在设置账户名时，最好不要使用您自身的姓名。</div>
+    </section>
+
+    <section id="desktop">
+      <h2>桌面布局&锁屏</h2>
+      <p>恭喜，您完成了安装Chronix Arch的所有操作，接下来可以开始探索系统了。</p>
+      <p>接下来，您将会看到下方界面：</p>
+      <img src="docs_images/desktop.png" alt="balenaEtcher界面内容截图">
+      <p>左下角的圆环为抽屉按钮，上方以名称首字母升序方式排列，下方为搜索框，可以直接查找对应的程序名以及描述。</p>
+      <p>右下角点击时钟可展开通知面板，点击状态图标打开控制中心，具体使用方法，参考<a href="https://help.gnome.org/gnome-help/quick-settings.html.zh_CN">GNOME快速设置。</a></p>
+      <p>有时您会看到右侧多出来了一些图标，不用疑惑，用对待Windows小图标的方式来处理使用他们。</p>
+      <p>鼠标/触控板多指上滑拖动到屏幕左上角打开活动，顶部菜单栏用于搜索。触控板二次上滑打开GNOME应用抽屉</p>
+      <p>通常情况下，您不可以在桌面上放置任何东西，但通过一些特殊方式可以实现，参考后文。</p>
+    </section>
+
+    <section id="personalization">
+      <h2>个性化</h2>
+      <h3>您可以更改系统内很多东西，先列举一下您可以更改的所有部分</h3>
+      <div class="card">
+        <div class="card-title"><span class="dot"></span>您可以个性化的所有部分</div>
+        <p>其中包含了系统的默认配置，其对应的类型，以及更改范围。</p>
+        <h4>参数</h4>
+        <table>
+          <thead><tr><th>名称</th><th>类型</th><th>说明</th></tr></thead>
+          <tbody>
+            <tr><td><code>mutter</code></td><td>壁纸</td><td>修改壁纸</td></tr>
+            <tr><td><code>dash-to-panel</code></td><td>任务栏</td><td>调整任务栏的细节设置</td></tr>
+            <tr><td><code>gnome</code></td><td>桌面环境</td><td>更换一个桌面环境(Advanced)</td></tr>
+            <tr><td><code>gnome-tweaks</code></td><td>GTK主题</td><td>调整字体，主题等(Advanced)</td></tr>
+            <tr><td><code>gnome-extensions</code></td><td>GTK扩展</td><td>给桌面加入扩展(Advanced)</td></tr>
+            <tr><td><code>blur-my-shell</code><td>blur模糊</td></td><td>修改模糊效果(Advanced)</td></tr>
+            <tr><td><code>arc-menu</code><td>应用抽屉/icon</td></td><td>修改抽屉样式以及其icon(Advanced)</td></tr>
+            <tr><td><code>plymouth</code><td>开机动画</td></td><td>自定义开机动画(Advanced)</td></tr>
+            <tr><td><code>gdm-settings</code></td><td>登陆屏幕</td><td>自定义登陆屏幕时的GTK主题与细节(Advanced)</td></tr>
+            <tr><td><code>lockscreen-extension</code><td>锁定屏幕</td></td><td>修改锁屏细节(Advanced)</td></tr>
+            <tr><td><code>beqs</code><td>控制中心</td></td><td>调整控制中心面板布局以及细节(Advanced)</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>我们仅为您介绍非<code>Advanced</code>的个性化设置</p>
+      <h3>修改壁纸：</h3>
+      <p>桌面右键点击更改壁纸进入设置的个性化页面</p>
+      <p>我们为您提供了五张Material风格的预设壁纸，您可以在网上自行下载壁纸来使用</p>
+      <div class="note warn">我们没给您做强调色调整功能，请忽略这个bug。</div>
+      <h3>调整任务栏：</h3>
+      <p>任务栏右键点击“Dash to Panel设置"进入任务栏配置页面</p>
+      <p>按照<a href="https://github.com/home-sweet-gnome/dash-to-panel">Dash To Panel扩展的Github页面</a>学习配置</p>
+      <div class="note">若您不会修改，最好不要乱动任何的设置。</div>
+    </section>
+
+    <section id="applications">
+      <h2>软件使用</h2>
+      <p>向您介绍各个软件的使用方法。</p>
+      <div class="card">
+        <div class="card-title"><span class="dot"></span>软件</div>
+        <h3>计算器</h3>
+        <a href="https://apps.gnome.org/zh-CN/Calculator/">GNOME计算器-GNOME Apps</a>
+        
+        <h3>设置</h3>
+        <a href="https://apps.gnome.org/zh-CN/Settings/">GNOME设置-GNOME Apps</a>
+        
+        <h3>文本编辑器</h3>
+        <a href="https://apps.gnome.org/zh-CN/TextEditor/">GNOME文本编辑器-GNOME Apps</a>
+
+        <h3>图像查看器</h3>
+        <a href="https://apps.gnome.org/zh-CN/Loupe/">GNOME图像查看器-GNOME Apps</a>
+        
+        <h3>文档查看器</h3>
+        <a href="https://apps.gnome.org/zh-CN/Papers/">GNOME文档查看器-GNOME Apps</a>
+        
+        <h3>文件</h3>
+        <a href="https://apps.gnome.org/zh-CN/Nautilus/">Nautilus-GNOME Apps</a>
+        
+        <h3>应用商店</h3>
+        <a href="https://apps.gnome.org/zh-CN/Software/">GNOME软件-GNOME Apps</a>
+        
+        <h3>Amberol</h3>
+        <a href="https://apps.gnome.org/zh-CN/Amberol/">Amberol-GNOME Apps</a>
+        
+        <h3>Google Chrome</h3>
+        <a href="https://google.cn/chrome/">Google Chrome 网页浏览器</a>
+        
+        <h3>Waydroid</h3>
+        <p>Android容器本体，点击即可启动Android进入桌面</p>
+        
+        <h3>Winetricks</h3>
+        <p>Wine配置工具</p>
+        
+    </section>
+
+    <section id="wine-waydroid">
+      <h2>Windows与Android支持</h2>
+      <p>我们为了拓宽平台以及使用习惯，加入了Windows与Android兼容功能</p>
+      <div class="card">
+        <div class="card-title"><span class="dot"></span>配置Windows(wine)</div>
+        <div class="note warn">不要在ROOT下使用wine，千万不要</div>
+        <pre><code><span class="tok-com"># 打开指定EXE/命令</span>
+wine #对应目录/对应命令
+
+<span class="tok-com"># 配置Wine</span>
+winecfg</code></pre>
+
+      <h3>特别的Chronix Quick-EXE-Runner</h3>
+      <p>为了方便用户日常使用顺畅，我们制作了CQER功能来允许用户直接双击exe打开。通过 <code>wine xxx</code>，因此不要更改 <code>wine</code> 的任何内容。</p>
+      <div class="note">Chronix Quick-EXE-Runner 仍在Beta阶段，如果遇到问题，直接反馈即可</div>
+      </div>
+      <div class="card">
+        <div class="card-title"><span class="dot"></span>配置Android(Waydroid)</div>
+        <div class="note">最好不要在ROOT下使用waydroid</div>
+        <pre><code><span class="tok-com"># 进入Android启动器</span>
+waydroid-session-start / # 直接点击开始菜单内的Waydroid图标
+
+<span class="tok-com"># 关闭</span>
+waydroid-session-stop / # 下滑的控制中心内关闭</code></pre>
+
+      <h3>特别的Chronix Quick-EXE-Runner</h3>
+      <p>为了方便用户日常使用顺畅，我们制作了CQER功能来允许用户直接双击exe打开。通过 <code>wine xxx</code>，因此不要更改 <code>wine</code> 的任何内容。</p>
+      <div class="note">Chronix Quick-EXE-Runner 仍在Beta阶段，如果遇到问题，直接反馈即可</div>
+      </div>
+    </section>
+
+    <section id="ttty">
+      <h2>终端&tty</h2>
+      <p>在使用过程中会遇到需要命令的部分，您需要一个能输入命令的地方</p>
+      <p>如果您希望一些功能能够做进系统内而不是终端运行，请向我们反馈，我们会根据大部分用户需求来修改。</p>
+      <h3>关于TTY</h3>
+      <p>我们在默认系统使用情况下通过一些方式禁用了tty的入口，为了防止用户在使用过程中误触到不认识的页面。</p>
+      <p>但是在gdm内（系统开机后未登录）您仍然可以通过 <code>ctrl</code> + <code>alt</code> + <code>1～12</code> 的方式打开。</p>
+      <h3>关于终端</h3>
+      <p>如果您觉得tty的使用过于困难，您可以选择使用我们内置在系统内的 <code>sakura</code> 终端模拟器</p>
+      <p>按下 <code>ctrl</code> + <code>alt</code> + <code>t</code> 即可打开</p>
+    </section>
+
+    <!-- 变更日志 -->
+    <section id="interior">
+      <h2>内置套件</h2>
+      <h3>Chronix Clear <span class="badge">Beta</span> <span class="badge">2026-09-20</span></h3>
+      <ul>
+        <li>在终端通过<code>chronix-clear</code>直接运行</li>
+        <li>这个工具主要为了在您封装系统前提前清理您的个性化信息与个人数据</li>
+        <li>使用后请立即重启并在完成封装前不要再次进入系统，否则设备信息会重新写入</li>
+      </ul>
+    </section>
+
+    <!-- qa -->
+    <section id="qa">
+      <h2>Q&A</h2>
+      <div class="note">该部分将在今后更新。</div>
+    </section>
+
+  </main>
+</div>
+
+<footer id="download">
+  <div class="foot-brand">
+    <div class="brand-name">Chronix Arch</div>
+    <p>专为普通用户而生的，设计，通用，简洁，稳定集于一身的全新Linux发行版</p>
+  </div>
+  <div class="copyright">Copyright 2026 ProjectChronix & u2kki_.</div>
+</footer>
+
+<script>
+
+(function(){
+  var links = Array.prototype.slice.call(document.querySelectorAll('.sidebar a'));
+  var sections = links.map(function(a){ return document.querySelector(a.getAttribute('href')); });
+  function onScroll(){
+    var pos = 80;
+    var current = 0;
+    for (var i=0;i<sections.length;i++){
+      if (sections[i] && sections[i].getBoundingClientRect().top <= pos) current = i;
+    }
+    links.forEach(function(a){ a.classList.remove('active'); });
+    if (links[current]) links[current].classList.add('active');
+  }
+  window.addEventListener('scroll', onScroll, { passive:true });
+  window.addEventListener('resize', onScroll);
+  onScroll();
+})();
+</script>
+</body>
+</html>

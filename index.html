@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>欢迎使用Chronix Arch</title>
+<style>
+  :root{
+    --primary:#3f51b5;
+    --primary-dark:#303f9f;
+    --primary-light:#c5cae9;
+    --accent:#ff4081;
+    --accent-dark:#f50057;
+
+    --surface:#ffffff;
+    --bg:#fafafa;
+    --card-bg:#ffffff;
+
+    --text-primary:rgba(0,0,0,.87);
+    --text-secondary:rgba(0,0,0,.54);
+    --text-disabled:rgba(0,0,0,.26);
+    --divider:rgba(0,0,0,.12);
+/
+    --radius:2px;
+
+    --spacer:8px;
+  }
+
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    font-family:'Roboto','PingFang SC','Noto Sans CJK SC',sans-serif;
+    color:var(--text-primary);
+    background:var(--bg);
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  .content-cover{ position:relative; z-index:3; }
+  footer{ position:relative; z-index:3; }
+
+  .elev-0{box-shadow:none;}
+  .elev-1{box-shadow:0 1px 3px rgba(0,0,0,.12),0 1px 2px rgba(0,0,0,.24);}      /* 卡片静止 1dp */
+  .elev-2{box-shadow:0 3px 6px rgba(0,0,0,.15),0 2px 4px rgba(0,0,0,.12);}      /* 凸起按钮 2dp */
+  .elev-4{box-shadow:0 2px 4px rgba(0,0,0,.14),0 3px 4px rgba(0,0,0,.12),0 1px 5px rgba(0,0,0,.20);} /* AppBar 4dp */
+  .elev-6{box-shadow:0 6px 10px rgba(0,0,0,.16),0 1px 18px rgba(0,0,0,.12),0 3px 5px rgba(0,0,0,.20);} /* FAB 6dp */
+  .elev-16{box-shadow:0 16px 24px 2px rgba(0,0,0,.14),0 6px 30px 5px rgba(0,0,0,.12),0 8px 10px -5px rgba(0,0,0,.20);} /* 模态 16dp */
+
+  .appbar{
+    position:fixed;top:0;left:0;right:0;z-index:100;
+    height:56px;
+    background:transparent;               /* 默认透明，位于图片上方 */
+    box-shadow:none;                      /* 透明时无阴影，保持纯净 */
+    color:#fff;
+    display:flex;align-items:center;
+    padding:0 24px;
+    transition:background .35s ease, box-shadow .35s ease;
+  }
+
+  .appbar.scrolled{
+    background:var(--primary);
+    box-shadow:0 2px 4px rgba(0,0,0,.14),0 3px 4px rgba(0,0,0,.12),0 1px 5px rgba(0,0,0,.20); /* 4dp */
+  }
+  .appbar .brand{font-size:20px;font-weight:500;letter-spacing:.5px;color:#fff;
+    text-shadow:0 1px 6px rgba(0,0,0,.3);transition:text-shadow .35s;}
+  .appbar.scrolled .brand{text-shadow:none;}
+  .appbar nav{margin-left:auto;display:flex;gap:8px;}
+  .appbar nav a{
+    color:rgba(255,255,255,.92);text-decoration:none;
+    font-size:14px;font-weight:500;text-transform:uppercase;letter-spacing:1px;
+    padding:8px 16px;border-radius:var(--radius);
+    transition:background .2s;
+  }
+  .appbar nav a:hover{background:rgba(255,255,255,.18);}
+  .appbar.scrolled nav a:hover{background:rgba(255,255,255,.12);}
+  .appbar nav a:active{background:rgba(255,255,255,.26);}
+
+  .hero{
+    position:relative;
+    margin-top:0;
+    color:#fff;
+    text-align:center;
+    overflow:hidden;
+    padding:0;
+  }
+
+  .hero-bg{
+    position:absolute;inset:0;
+    width:100%;height:100%;
+    object-fit:cover;object-position:center;
+    z-index:0;
+  }
+
+  .hero-bg-fixed{
+    position:fixed;
+    top:0;left:0;
+    width:100vw;height:56.25vw;
+    max-height:100vh;
+    z-index:0;
+    overflow:hidden;
+    background:var(--primary);
+  }
+  .hero-bg-fixed img{
+    width:100%;height:100%;
+    object-fit:cover;object-position:center;
+    display:block;
+  }
+
+  .hero{
+    position:relative;z-index:1;
+    height:56.25vw;max-height:100vh;
+    aspect-ratio:16/9;
+    display:flex;flex-direction:column;
+    pointer-events:none;
+  }
+  .hero > *{ pointer-events:auto; }
+  @supports not (aspect-ratio:16/9){
+    .hero::before{ content:""; display:block; padding-top:56.25%; }
+  }
+
+  .hero-top{
+    position:relative;z-index:2;
+    padding:0 24px;
+    flex:1;
+    display:flex;flex-direction:column;
+    align-items:center;justify-content:center;
+  }
+  .hero h1{font-size:48px;font-weight:400;line-height:1.2;margin-bottom:16px;color:#fff;
+    text-shadow:0 1px 8px rgba(0,0,0,.35);}
+  .hero p{font-size:18px;color:rgba(255,255,255,.92);max-width:640px;margin:0 auto 32px;
+    text-shadow:0 1px 6px rgba(0,0,0,.3);}
+  .hero .subtitle{font-size:16px;color:rgba(255,255,255,.85);margin-bottom:40px;}
+
+  .content-cover{
+    position:relative;z-index:2;
+    background:var(--bg);
+    border-radius:0;
+    padding-top:120px;
+  }
+  
+
+  .btn{
+    display:inline-block;
+    height:36px;min-width:88px;
+    padding:0 16px;
+    font-size:14px;font-weight:500;
+    text-transform:uppercase;letter-spacing:1px;
+    border:none;border-radius:var(--radius);
+    cursor:pointer;
+    display:inline-flex;align-items:center;justify-content:center;
+    transition:box-shadow .2s,background .2s;
+    text-decoration:none;
+  }
+  .btn-raised{background:var(--accent);color:#fff;box-shadow:0 3px 6px rgba(0,0,0,.15),0 2px 4px rgba(0,0,0,.12);} /* 2dp */
+  .btn-raised:hover{box-shadow:0 6px 12px rgba(0,0,0,.18),0 4px 8px rgba(0,0,0,.14);background:var(--accent-dark);}
+  .btn-flat{background:transparent;color:#fff;}
+  .btn-flat:hover{background:rgba(255,255,255,.12);}
+  .btn-flat.dark{color:var(--primary);}
+  .btn-flat.dark:hover{background:rgba(63,81,181,.08);}
+
+  .hero-actions{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;}
+
+  section{padding:80px 24px;}
+  .container{max-width:1080px;margin:0 auto;}
+  .section-title{
+    font-size:34px;font-weight:400;color:var(--text-primary);
+    margin-bottom:16px;text-align:center;
+  }
+  .section-desc{font-size:16px;color:var(--text-secondary);text-align:center;max-width:640px;margin:0 auto 56px;}
+
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:24px;}
+  .card{
+    background:var(--card-bg);
+    border-radius:var(--radius);
+    box-shadow:0 1px 3px rgba(0,0,0,.12),0 1px 2px rgba(0,0,0,.24); /* 1dp */
+    overflow:hidden;
+    transition:box-shadow .2s;
+  }
+  .card:hover{box-shadow:0 3px 6px rgba(0,0,0,.15),0 2px 4px rgba(0,0,0,.12);} /* 升 2dp */
+  .card .card-media{height:160px;background:var(--primary-light);display:flex;align-items:center;justify-content:center;}
+  .card .card-media .ico{font-size:56px;color:var(--primary);}
+  .card .card-body{padding:24px 16px 16px;}
+  .card .card-title{font-size:20px;font-weight:500;margin-bottom:8px;color:var(--text-primary);}
+  .card .card-text{font-size:14px;color:var(--text-secondary);margin-bottom:16px;}
+
+  .features{background:var(--surface);}
+  .feature-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:40px;}
+  .feature{display:flex;gap:16px;align-items:flex-start;}
+  .feature .feature-ico{
+    width:56px;height:56px;flex-shrink:0;
+    border-radius:50%;
+    background:var(--primary);color:#fff;
+    display:flex;align-items:center;justify-content:center;
+    font-size:24px;
+    box-shadow:0 2px 4px rgba(0,0,0,.14),0 3px 4px rgba(0,0,0,.12),0 1px 5px rgba(0,0,0,.20);
+  }
+  .feature h3{font-size:16px;font-weight:500;margin-bottom:4px;color:var(--text-primary);}
+  .feature p{font-size:14px;color:var(--text-secondary);}
+
+  .stats{background:var(--primary);color:#fff;}
+  .stats .section-title,.stats .section-desc{color:#fff;}
+  .stats .section-desc{color:rgba(255,255,255,.70);}
+  .stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:32px;text-align:center;}
+  .stat .num{font-size:48px;font-weight:400;color:#fff;}
+  .stat .label{font-size:14px;color:rgba(255,255,255,.70);text-transform:uppercase;letter-spacing:1px;}
+
+  .download-actions{text-align:center;margin-top:8px;}
+  .download-actions .btn-raised{height:44px;min-width:160px;font-size:15px;}
+
+  footer{background:#212121;color:rgba(255,255,255,.70);padding:48px 24px 24px;}
+  .foot-brand{max-width:640px;margin:0 auto 32px;text-align:center;}
+  .foot-brand h4{color:#fff;font-size:18px;font-weight:500;margin-bottom:12px;}
+  .foot-brand p{font-size:14px;color:rgba(255,255,255,.70);line-height:1.7;}
+  .copyright{text-align:center;font-size:12px;color:rgba(255,255,255,.30);border-top:1px solid rgba(255,255,255,.12);padding-top:24px;}
+
+  .fab{
+    position:fixed;right:24px;bottom:24px;z-index:99;
+    width:56px;height:56px;border-radius:50%;
+    background:var(--accent);color:#fff;border:none;cursor:pointer;
+    font-size:24px;
+    box-shadow:0 6px 10px rgba(0,0,0,.16),0 1px 18px rgba(0,0,0,.12),0 3px 5px rgba(0,0,0,.20); /* 6dp */
+    transition:box-shadow .2s,transform .2s;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .fab:hover{box-shadow:0 12px 17px 2px rgba(0,0,0,.14),0 5px 22px 4px rgba(0,0,0,.12),0 7px 8px -4px rgba(0,0,0,.20);transform:translateY(-2px);}
+
+  @media(max-width:600px){
+    .hero h1{font-size:34px;}
+    .appbar nav{display:none;}
+    section{padding:56px 16px;}
+  }
+</style>
+</head>
+<body>
+
+  <header class="appbar">
+    <div class="brand">Chronix Arch</div>
+    <nav>
+      <a href="index.html">官网</a>
+      <a href="docs.html">文档</a>
+      <a href="download.html">下载</a>
+      <a href="https://gitee.com/project-chronix">Gitee</a>
+      <a href="#download">Bilibili</a>
+    </nav>
+  </header>
+
+  <div class="hero-bg-fixed" aria-hidden="true">
+    <img src="image.jpg" alt="">
+  </div>
+
+  <section class="hero" id="hero">
+    <div class="hero-top">
+      <h1>专为普通用户而生的Linux发行版</h1>
+      <p class="subtitle">设计，通用，简洁，稳定集于一身的全新选择</p>
+      <div class="hero-actions">
+        <a href="#download" class="btn btn-raised">提前获取</a>
+        <a href="#products" class="btn btn-flat">了解更多</a>
+      </div>
+    </div>
+  </section>
+
+  <div class="content-cover">
+  <section id="intro" style="padding-top:0;">
+    <div class="container">
+      <p style="font-size:18px;color:var(--text-secondary);max-width:720px;margin:0 auto;text-align:center;line-height:1.8;">Chronix Arch会给予您独特的Linux使用体验，让您快速上手全新的环境。他同样适合创作者，确保您在工作途中不被其他事物打扰。从始至终，做您最好的助手。</p>
+    </div>
+  </section>
+
+  <section id="products">
+    <div class="container">
+      <h2 class="section-title">系统特性</h2>
+      <p class="section-desc">我们对Chronix作出的优化与提升</p>
+      <div class="grid">
+        <div class="card">
+          <div class="card-media"><span class="ico">▦</span></div>
+          <div class="card-body">
+            <h3 class="card-title">基于ArchLinux</h3>
+            <p class="card-text">我们的系统底层基于ArchLinux，同时做了部分优化，提升日用稳定性</p>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-media"><span class="ico">◈</span></div>
+          <div class="card-body">
+            <h3 class="card-title">预装Wine/Waydroid</h3>
+            <p class="card-text">您可以直接在Chronix上运行exe文件，同时支持Android</p>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-media"><span class="ico">⚙</span></div>
+          <div class="card-body">
+            <h3 class="card-title">GNOME桌面环境</h3>
+            <p class="card-text">桌面基于GNOME深度定制，贴合Material设计风格，使用过程赏心悦目</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="features" class="features">
+    <div class="container">
+      <h2 class="section-title">为什么他适合每一个人</h2>
+      <p class="section-desc">我们为了让每个人都能轻松上手Chronix，做了许多优化</p>
+      <div class="feature-row">
+        <div class="feature">
+          <div class="feature-ico">⚡</div>
+          <div><h3>保护底层</h3><p>关闭tty，隐藏终端入口，您不会因为一个意外的更改而无从下手</p></div>
+        </div>
+        <div class="feature">
+          <div class="feature-ico">🔒</div>
+          <div><h3>开发者友好</h3><p>系统预装yay和vsReflectorManager，不必花费更多时间自己部署</p></div>
+        </div>
+        <div class="feature">
+          <div class="feature-ico">🔌</div>
+          <div><h3>实时更新</h3><p>系统每过一小时会静默检查一次更新，确保您使用的系统始终稳定</p></div>
+        </div>
+        <div class="feature">
+          <div class="feature-ico">♿</div>
+          <div><h3>多平台支持</h3><p>我们预装有wine和waydroid，您可以直接在Chronix上运行Windows和Android软件</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="stats" class="stats">
+    <div class="container">
+      <h2 class="section-title">覆盖程度</h2>
+      <p class="section-desc">基于各种开源软件/商店，感谢各位开源软件的开发者</p>
+      <div class="stat-grid">
+        <div class="stat"><div class="num">100,000+</div><div class="label">可用软件生态</div></div>
+        <div class="stat"><div class="num">180+</div><div class="label">语言支持</div></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="download" class="contact">
+    <div class="container">
+      <h2 class="section-title">提前获取</h2>
+      <p class="section-desc">版本: R1-2609 (Polaris)  GNOME版本: 50</p>
+      <div class="download-actions">
+        <a href="download.html" class="btn btn-raised">前往下载</a>
+      </div>
+    </div>
+  </section>
+
+  </div>
+
+  <footer>
+    <div class="foot-brand">
+      <h4>Chronix Arch</h4>
+      <p>专为普通用户而生的，设计，通用，简洁，稳定集于一身的全新Linux发行版</p>
+    </div>
+    <div class="copyright">Copyright 2026 ProjectChronix & u2kki_.</div>
+  </footer>
+
+  <button class="fab" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="回到顶部">↑</button>
+
+  <script>
+    (function(){
+      var bar=document.querySelector('.appbar');
+      var cover=document.querySelector('.content-cover');
+      if(!bar) return;
+      function onScroll(){
+        var line=56;   /* AppBar 高度(56dp) */
+        var threshold=cover? cover.getBoundingClientRect().top : window.innerHeight;
+        if(threshold<=line){ bar.classList.add('scrolled'); }
+        else{ bar.classList.remove('scrolled'); }
+      }
+      window.addEventListener('scroll',onScroll,{passive:true});
+      window.addEventListener('resize',onScroll);
+      onScroll();
+
+      var bg=document.querySelector('.hero-bg-fixed');
+      function onScrollBg(){
+        if(!bg) return;
+        var limit=window.innerHeight;   /* 首屏高度（含 16:9 背景区） */
+        if(window.scrollY > limit-56){ bg.style.opacity='0'; bg.style.visibility='hidden'; }
+        else{ bg.style.opacity='1'; bg.style.visibility='visible'; }
+      }
+      window.addEventListener('scroll',onScrollBg,{passive:true});
+      window.addEventListener('resize',onScrollBg);
+      onScrollBg();
+    })();
+  </script>
+
+</body>
+</html>
